@@ -27,6 +27,7 @@ exports.userRegister = async (req, res) => {
             if (!token) {
                 return res.status(400).json({ error: 'something went wrong' })
             }
+            const url=process.env.FRONTEND_URL+'\/email\/confirmation\/'+token.token
             //send Email
             sendEmail({
                 from: 'no-reply@expresscommerce.com',
@@ -34,9 +35,12 @@ exports.userRegister = async (req, res) => {
                 subject: 'Email Verification Link',
                 text: `Hello, \n\n 
              Please Verify Your account by click in the link below:\n\n
-             http:\/\/${req.headers.host}\/api\/confirmation\/${token.token}   `
+             http:\/\/${req.headers.host}\/api\/confirmation\/${token.token}   `,
                 //http://localhost:8000/api/confirmation/tokenvalue
-
+                html:`
+                   <h1>Confirm your email account</h1>
+                   <button><a href="${url}">Click to verify</a></button>
+                         `
             })
 
             res.send(user)
@@ -124,6 +128,8 @@ exports.forgetPassword = async (req, res) => {
     if (!token) {
         return res.status(400).json({ error: 'something went wrong' })
     }
+
+    const url=process.env.FRONTEND_URL+'\/reset\/password\/'+token.token
     //sendEmail
 
     sendEmail({
@@ -132,8 +138,12 @@ exports.forgetPassword = async (req, res) => {
         subject: 'Password Reset Link',
         text: `Hello, \n\n 
              Please Reset Your password by click in the link below:\n\n
-             http:\/\/${req.headers.host}\/api\/resetpassword\/${token.token}   `
+             http:\/\/${req.headers.host}\/api\/resetpassword\/${token.token}   `,
         //http://localhost:8000/api/resetpassword/tokenvalue
+        html:`
+                   <h1>Reset Your Password</h1>
+                   <button><a href="${url}">Click to reset Password</a></button>
+                         `
     })
     res.json({ message: "password reset link has been sent to your email " })
 }
